@@ -1,12 +1,12 @@
 import { Component } from "react";
 
-import Canvas from "./Canvas";
+import GameLoop from "./GameLoop";
 
 class Battleground extends Component {
   render() {
     return (
       <div className="container">
-        <Canvas />
+        <GameLoop />
         <div className="gambit-container">
           <div className="gambit">
             <label htmlFor="subject0">If</label>

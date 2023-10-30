@@ -65,6 +65,8 @@ function updateEnemyBehavior(
   console.log(self, currentState);
   switch (currentState) {
     case STATE_IDLE:
+      console.log(self);
+      console.log(self.hasAttacked);
       if (self.hasAttacked === false) {
         currentState = STATE_ENGAGE;
       } else {

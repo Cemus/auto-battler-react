@@ -7,18 +7,18 @@ const enemiesList = [];
 const enemiesStats = {
   atk: 5,
   def: 5,
-  spd: 20,
+  agi: 3,
 };
 
 const enemiesStats2 = {
   atk: 5,
   def: 5,
-  spd: 50,
+  agi: 6,
 };
 const enemiesStats3 = {
   atk: 5,
   def: 5,
-  spd: 70,
+  agi: 1,
 };
 
 let playerChar1 = new Player("Jean", "mage", 1, 2, 100);
@@ -30,6 +30,7 @@ let enemyChar1 = new Enemy(
   5,
   4,
   enemiesStats,
+  false,
   false
 );
 let enemyChar2 = new Enemy(
