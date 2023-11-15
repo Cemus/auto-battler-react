@@ -6,30 +6,32 @@ function drawSquare(x, y, color, ctx) {
 }
 
 function drawTriangle(x, y, color, ctx) {
+  const spriteSize = 8;
   ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x + 20, y + 40);
-  ctx.lineTo(x - 20, y + 40);
+  ctx.moveTo(x, y - spriteSize * 2);
+  ctx.lineTo(x + spriteSize * 2, y + spriteSize * 2);
+  ctx.lineTo(x - spriteSize * 2, y + spriteSize * 2);
   ctx.closePath();
   ctx.fill();
 }
 
 function drawCross(x, y, color, ctx) {
+  const spriteSize = 12;
   ctx.strokeStyle = color;
   ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.moveTo(x - 10, y - 10);
-  ctx.lineTo(x + 10, y + 10);
-  ctx.moveTo(x - 10, y + 10);
-  ctx.lineTo(x + 10, y - 10);
+  ctx.moveTo(x - spriteSize, y - spriteSize);
+  ctx.lineTo(x + spriteSize, y + spriteSize);
+  ctx.moveTo(x - spriteSize, y + spriteSize);
+  ctx.lineTo(x + spriteSize, y - spriteSize);
   ctx.stroke();
 }
 
 function drawCircle(x, y, color, ctx) {
   ctx.fillStyle = color;
   ctx.beginPath();
-  let radius = 15;
+  let radius = 16;
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.fill();
 }

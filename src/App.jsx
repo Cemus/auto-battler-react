@@ -1,9 +1,18 @@
-import { Component } from "react";
-import Battleground from "./components/Battleground";
 import "./styles/App.css";
+import { Component } from "react";
+import Header from "./components/Header";
+import GameLoop from "./components/GameLoop";
+import Footer from "./components/Footer";
+
 class App extends Component {
   render() {
-    return <Battleground />;
+    return (
+      <div className="container">
+        <Header />
+        <GameLoop />
+        <Footer />
+      </div>
+    );
   }
 }
 

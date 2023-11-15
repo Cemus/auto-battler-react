@@ -271,6 +271,7 @@ const getRandomDirection = () => {
 
 export const Attack = (self, target, all, gridSize) => {
   let targetPushed = false;
+
   if (!self.hasAttacked) {
     if (self.gridX === target.gridX && self.gridY < target.gridY) {
       if (isSpaceFree("yPlus", target, all, gridSize)) {
@@ -301,28 +302,39 @@ export const Attack = (self, target, all, gridSize) => {
             directions[i] === "xPlus" ? 1 : directions[i] === "xMinus" ? -1 : 0;
           target.gridY +=
             directions[i] === "yPlus" ? 1 : directions[i] === "yMinus" ? -1 : 0;
+
           break;
         }
       }
     }
-    self.hasAttacked = true;
+    self.behaviourStates.hasAttacked = true;
   }
 };
 
-export const canAttack = (coolDown) => {
-  return coolDown <= 0;
+export const setDefaultState = (self) => {
+  self.behaviourStates = {
+    currentState: "IDLE",
+    target: null,
+    hasAttacked: false,
+    hasMoved: false,
+  };
 };
 
 export const findTarget = (self, opponentList) => {
   let closestTarget = null;
-  opponentList.forEach((player) => {
-    if (
-      closestTarget === null ||
-      closestTarget.gridX < Math.abs(player.gridX - self.gridX)
+
+  opponentList.forEach((entity) => {
+    if (closestTarget === null) {
+      closestTarget = entity;
+    } else if (
+      Math.abs(closestTarget.gridX + closestTarget.gridY) +
+        Math.abs(self.gridX + self.gridY) >
+      Math.abs(entity.gridX + entity.gridY) + Math.abs(self.gridX + self.gridY)
     ) {
-      closestTarget = player;
+      closestTarget = entity;
     }
   });
+
   return closestTarget;
 };
 
@@ -335,7 +347,7 @@ export const isNextToEnemy = (self, target) => {
 export default {
   correctPosition,
   Attack,
-  canAttack,
+  setDefaultState,
   followEnemy,
   findTarget,
   isNextToEnemy,

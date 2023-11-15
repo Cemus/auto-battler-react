@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { updateEnemyBehavior } from "../entities/enemies.js";
-
+import { updateBehaviour } from "../ai/updateBehaviour.js";
 import { playersList, enemiesList } from "../utils/charactersCreation.js";
 
 class GameLoop extends Component {
@@ -17,16 +16,17 @@ class GameLoop extends Component {
     };
     this.gameLoop = this.gameLoop.bind(this);
     this.nextPlayer = this.nextPlayer.bind(this);
+    this.allEntitiesList = [...playersList, ...enemiesList];
   }
+
   nextPlayer() {
-    console.log("hi");
     this.setState((prevState) => ({
       currentPlayerIndex:
-        (prevState.currentPlayerIndex + 1) % enemiesList.length,
+        (prevState.currentPlayerIndex + 1) % this.allEntitiesList.length,
     }));
-    console.log("hi");
-    enemiesList[this.state.currentPlayerIndex].hasAttacked = false;
+    this.allEntitiesList[this.state.currentPlayerIndex].hasAttacked = false;
   }
+
   createGrid(ctx) {
     const cellColor = "black";
     const cellSpacing = 1;
@@ -62,36 +62,31 @@ class GameLoop extends Component {
   gameLoop() {
     this.state.ctx.clearRect(0, 0, this.canvasRef.width, this.canvasRef.height);
     this.createGrid(this.state.ctx);
-    if (this.state.currentPlayerIndex < enemiesList.length) {
-      const currentPlayer = enemiesList[this.state.currentPlayerIndex];
-      playersList.forEach((player) => {
-        if (player !== currentPlayer) {
-          player.sprite(this.state.ctx);
+
+    if (this.state.currentPlayerIndex < this.allEntitiesList.length) {
+      const currentPlayer = this.allEntitiesList[this.state.currentPlayerIndex];
+      this.allEntitiesList.forEach((entity) => {
+        if (entity !== currentPlayer) {
+          entity.sprite(this.state.ctx);
         }
       });
-      enemiesList.forEach((enemy) => {
-        if (enemy !== currentPlayer) {
-          enemy.sprite(this.state.ctx);
-        }
-      });
-      /*     console.log(currentPlayer); */
-      updateEnemyBehavior(
+      updateBehaviour(
         currentPlayer,
         playersList,
         enemiesList,
+        this.allEntitiesList,
         this.nextPlayer,
         this.gridSize,
         this.canvasRef,
         this.state.ctx
       );
-      console.log(this.state.currentPlayerIndex);
     } else {
       this.setState({ currentPlayerIndex: 0 });
     }
 
     setTimeout(() => {
       requestAnimationFrame(this.gameLoop);
-    }, 250);
+    }, 120);
   }
   componentDidMount() {
     const canvas = this.canvasRef.current;
@@ -103,7 +98,6 @@ class GameLoop extends Component {
       this.gameLoop();
     });
   }
-  componentDidUpdate() {}
   render() {
     return (
       <>
