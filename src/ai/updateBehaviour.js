@@ -18,10 +18,11 @@ function updateBehaviour(
   ctx
 ) {
   const opponentList = self.isPlayer ? enemiesList : playersList;
+  console.log(self.behaviourStates.target);
   switch (self.behaviourStates.currentState) {
     case STATE_IDLE:
       console.log(self.behaviourStates.hasAttacked);
-      if (self.behaviourStates.hasAttacked === true) {
+      if (self.behaviourStates.hasAttacked === true || self.hp <= 0) {
         nextPlayer();
         ai.setDefaultState(self);
       } else {
@@ -60,7 +61,6 @@ function updateBehaviour(
       break;
     case STATE_ATTACK:
       if (!self.behaviourStates.hasAttacked) {
-        console.log(self.behaviourStates.hasAttacked);
         ai.Attack(self, self.behaviourStates.target, allEntitiesList, gridSize);
         self.behaviourStates.currentState = STATE_IDLE;
       } else {

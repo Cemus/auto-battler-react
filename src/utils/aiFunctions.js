@@ -302,11 +302,11 @@ export const Attack = (self, target, all, gridSize) => {
             directions[i] === "xPlus" ? 1 : directions[i] === "xMinus" ? -1 : 0;
           target.gridY +=
             directions[i] === "yPlus" ? 1 : directions[i] === "yMinus" ? -1 : 0;
-
           break;
         }
       }
     }
+    target.hp -= self.stats.atk;
     self.behaviourStates.hasAttacked = true;
   }
 };

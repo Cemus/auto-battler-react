@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { updateBehaviour } from "../ai/updateBehaviour.js";
 import { playersList, enemiesList } from "../utils/charactersCreation.js";
+import AfterBattle from "./AfterBattle.jsx";
 
-class GameLoop extends Component {
+export default class GameLoop extends Component {
   constructor(props) {
     super(props);
     this.canvasRef = React.createRef();
@@ -13,18 +14,25 @@ class GameLoop extends Component {
     this.state = {
       ctx: null,
       currentPlayerIndex: 0,
+      allEntitiesList: [...playersList, ...enemiesList],
+      victory: null,
     };
     this.gameLoop = this.gameLoop.bind(this);
     this.nextPlayer = this.nextPlayer.bind(this);
-    this.allEntitiesList = [...playersList, ...enemiesList];
   }
 
   nextPlayer() {
     this.setState((prevState) => ({
       currentPlayerIndex:
-        (prevState.currentPlayerIndex + 1) % this.allEntitiesList.length,
+        (prevState.currentPlayerIndex + 1) % this.state.allEntitiesList.length,
     }));
-    this.allEntitiesList[this.state.currentPlayerIndex].hasAttacked = false;
+    this.setState((prevState) => {
+      const updatedEntitiesList = [...prevState.allEntitiesList];
+      updatedEntitiesList[prevState.currentPlayerIndex].hasAttacked = false;
+      return {
+        allEntitiesList: updatedEntitiesList,
+      };
+    });
   }
 
   createGrid(ctx) {
@@ -59,22 +67,45 @@ class GameLoop extends Component {
     }
   }
 
+  checkIfSomebodyWon(updatedPlayerList, updatedEnemiesList) {
+    if (updatedPlayerList.length === 0 || updatedEnemiesList.length === 0) {
+      let tempVictory = null;
+      if (updatedPlayerList.length === 0) {
+        tempVictory = false;
+      }
+      if (updatedEnemiesList.length === 0) {
+        tempVictory = true;
+      }
+      setTimeout(() => {
+        this.setState({ victory: tempVictory });
+        clearInterval(this.gameLoopInterval);
+        return;
+      }, 1000);
+    }
+  }
+
   gameLoop() {
     this.state.ctx.clearRect(0, 0, this.canvasRef.width, this.canvasRef.height);
     this.createGrid(this.state.ctx);
 
-    if (this.state.currentPlayerIndex < this.allEntitiesList.length) {
-      const currentPlayer = this.allEntitiesList[this.state.currentPlayerIndex];
-      this.allEntitiesList.forEach((entity) => {
+    const updatedPlayerList = playersList.filter((entity) => entity.hp > 0);
+    const updatedEnemiesList = enemiesList.filter((entity) => entity.hp > 0);
+
+    this.checkIfSomebodyWon(updatedPlayerList, updatedEnemiesList);
+
+    if (this.state.currentPlayerIndex < this.state.allEntitiesList.length) {
+      const currentPlayer =
+        this.state.allEntitiesList[this.state.currentPlayerIndex];
+      this.state.allEntitiesList.forEach((entity) => {
         if (entity !== currentPlayer) {
           entity.sprite(this.state.ctx);
         }
       });
       updateBehaviour(
         currentPlayer,
-        playersList,
-        enemiesList,
-        this.allEntitiesList,
+        updatedPlayerList,
+        updatedEnemiesList,
+        this.state.allEntitiesList,
         this.nextPlayer,
         this.gridSize,
         this.canvasRef,
@@ -83,11 +114,8 @@ class GameLoop extends Component {
     } else {
       this.setState({ currentPlayerIndex: 0 });
     }
-
-    setTimeout(() => {
-      requestAnimationFrame(this.gameLoop);
-    }, 120);
   }
+
   componentDidMount() {
     const canvas = this.canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -95,21 +123,26 @@ class GameLoop extends Component {
     canvas.height = 512;
     this.createGrid(ctx);
     this.setState({ ctx }, () => {
-      this.gameLoop();
+      this.gameLoopInterval = setInterval(this.gameLoop, 120);
     });
   }
+  componentWillUnmount() {
+    clearInterval(this.gameLoopInterval);
+  }
   render() {
-    return (
-      <>
-        <canvas
-          className="game-canvas"
-          ref={this.canvasRef}
-          width={this.canvasRef.width}
-          height={this.canvasRef.height}
-        ></canvas>
-      </>
-    );
+    if (this.state.victory === null) {
+      return (
+        <>
+          <canvas
+            className="game-canvas"
+            ref={this.canvasRef}
+            width={this.canvasRef.width}
+            height={this.canvasRef.height}
+          ></canvas>
+        </>
+      );
+    } else {
+      return <AfterBattle victory={this.state.victory} />;
+    }
   }
 }
-
-export default GameLoop;

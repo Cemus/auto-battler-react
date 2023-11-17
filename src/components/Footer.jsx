@@ -5,7 +5,15 @@ class Footer extends Component {
     super();
   }
   render() {
-    return <footer></footer>;
+    return (
+      <footer>
+        <ul>
+          <li>Playtime : 456</li>
+          <li>Gold : 456</li>
+          <li>Victory : 456</li>
+        </ul>
+      </footer>
+    );
   }
 }
 
