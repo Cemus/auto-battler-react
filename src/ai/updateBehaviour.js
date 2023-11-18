@@ -18,10 +18,8 @@ function updateBehaviour(
   ctx
 ) {
   const opponentList = self.isPlayer ? enemiesList : playersList;
-  console.log(self.behaviourStates.target);
   switch (self.behaviourStates.currentState) {
     case STATE_IDLE:
-      console.log(self.behaviourStates.hasAttacked);
       if (self.behaviourStates.hasAttacked === true || self.hp <= 0) {
         nextPlayer();
         ai.setDefaultState(self);

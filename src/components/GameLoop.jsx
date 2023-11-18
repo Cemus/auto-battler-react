@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { updateBehaviour } from "../ai/updateBehaviour.js";
-import { playersList, enemiesList } from "../utils/charactersCreation.js";
+import { createEntities } from "../utils/charactersCreation.js";
 import AfterBattle from "./AfterBattle.jsx";
 
 export default class GameLoop extends Component {
@@ -11,10 +11,13 @@ export default class GameLoop extends Component {
     this.numRows = 8;
     this.cellSize = 64;
     this.gridSize = this.numCols * this.numRows;
+    const { playersList, enemiesList } = createEntities();
+    this.playersList = playersList;
+    this.enemiesList = enemiesList;
     this.state = {
       ctx: null,
       currentPlayerIndex: 0,
-      allEntitiesList: [...playersList, ...enemiesList],
+      allEntitiesList: [...this.playersList, ...this.enemiesList],
       victory: null,
     };
     this.gameLoop = this.gameLoop.bind(this);
@@ -88,11 +91,16 @@ export default class GameLoop extends Component {
     this.state.ctx.clearRect(0, 0, this.canvasRef.width, this.canvasRef.height);
     this.createGrid(this.state.ctx);
 
-    const updatedPlayerList = playersList.filter((entity) => entity.hp > 0);
-    const updatedEnemiesList = enemiesList.filter((entity) => entity.hp > 0);
+    const updatedPlayerList = this.playersList.filter(
+      (entity) => entity.hp > 0
+    );
+    const updatedEnemiesList = this.enemiesList.filter(
+      (entity) => entity.hp > 0
+    );
 
     this.checkIfSomebodyWon(updatedPlayerList, updatedEnemiesList);
 
+    console.log(this.state.allEntitiesList);
     if (this.state.currentPlayerIndex < this.state.allEntitiesList.length) {
       const currentPlayer =
         this.state.allEntitiesList[this.state.currentPlayerIndex];
