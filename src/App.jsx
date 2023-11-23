@@ -2,11 +2,13 @@ import "./styles/App.css";
 import { Component } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 import Arena from "./pages/Arena";
 import Party from "./pages/Party";
 import Shop from "./pages/Shop";
 import Cards from "./pages/Cards";
+import Home from "./pages/Home";
 
 class App extends Component {
   render() {
@@ -17,7 +19,7 @@ class App extends Component {
             path="/"
             element={
               <Layout>
-                <Home />
+                <Register />
               </Layout>
             }
           />
@@ -39,6 +41,14 @@ class App extends Component {
             }
           />
           <Route
+            path="/home"
+            element={
+              <Layout>
+                <Home />
+              </Layout>
+            }
+          />
+          <Route
             path="/shop"
             element={
               <Layout>
@@ -51,6 +61,14 @@ class App extends Component {
             element={
               <Layout>
                 <Arena />
+              </Layout>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <Layout>
+                <Login />
               </Layout>
             }
           />

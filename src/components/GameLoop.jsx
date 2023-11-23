@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { updateBehaviour } from "../ai/updateBehaviour.js";
-import { createEntities } from "../utils/charactersCreation.js";
+import { createEntities } from "../utils/game/charactersCreation.js";
 import AfterBattle from "./AfterBattle.jsx";
 
 export default class GameLoop extends Component {

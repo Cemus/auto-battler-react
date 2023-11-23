@@ -1,5 +1,6 @@
 #root {
   --distanceElements: 1rem;
+  --mainColor: rgb(12, 41, 51);
 }
 
 body {
@@ -8,6 +9,14 @@ body {
   box-sizing: border-box;
   font-family: "Arial", sans-serif;
   background-color: black;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
 }
 
 .global-container {
@@ -24,63 +33,83 @@ body {
   color: white;
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 10;
+  justify-content: space-between;
+  height: 3rem;
 }
-
-/*  N A V  L E F T  */
-
-.navigation-left {
-  display: flex;
-  align-items: center;
-  width: 50%;
-  margin-left: var(--distanceElements);
-}
-
-nav ul {
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  gap: 2rem;
-}
-
-li {
-  text-align: center;
-  list-style: none;
-}
-
-a {
-  text-decoration: none;
-  color: white;
-}
-
-a:hover {
-  color: goldenrod;
-}
-
-/*  T I T L E  */
 
 h1 {
   position: relative;
-  width: 100%;
+  font-size: larger;
+  padding: 0;
   margin: 0;
-  text-align: center;
+  margin-left: var(--distanceElements);
 }
 
-/*  N A V  R I G H T  */
-
-.navigation-right {
-  width: 50%;
+h1 a {
+  color: white;
 }
-.navigation-right ul {
-  justify-content: flex-end;
-  margin-right: var(--distanceElements);
+h1 a:hover {
+  color: goldenrod;
+}
+
+.header--log {
+  display: flex;
+  align-items: center;
+  gap: var(--distanceElements);
+}
+
+.header--log-text {
+  font-size: small;
+}
+
+.header--log-text > span {
+  font-size: medium;
+  font-weight: bold;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
 }
 
 .login {
   cursor: pointer;
   width: 2rem;
   height: 2rem;
+  margin-right: var(--distanceElements);
+}
+
+/*  N A V   */
+
+.navigation-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.navigation-left ul {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 2rem;
+}
+
+.navigation-left li {
+  text-align: center;
+  list-style: none;
+}
+
+.navigation-left a {
+  text-decoration: none;
+  color: white;
+  border: solid rgb(12, 41, 51);
+  background-color: rgb(12, 41, 51);
+  border-radius: 1rem;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+}
+
+.navigation-left a:hover {
+  color: goldenrod;
+  border: solid goldenrod;
 }
 
 /*  P A G E S  */
@@ -116,7 +145,34 @@ main {
   flex: 1;
 }
 
-/*  H O M E  */
+/*  R E G I S T E R  */
+
+form {
+  background-color: goldenrod;
+  padding: 1rem;
+  color: white;
+  border-radius: 1rem;
+  z-index: 10;
+}
+
+fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border: solid 2px var(--mainColor);
+  border-radius: 1rem;
+}
+
+legend {
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
 
 .main--home {
   display: flex;
@@ -124,6 +180,38 @@ main {
   align-items: center;
   background-color: black;
   padding: var(--distanceElements);
+}
+
+input,
+.submit {
+  margin-bottom: 1rem;
+  border-radius: 0.2rem;
+  border: none;
+  padding: 0.3rem;
+}
+
+button {
+  cursor: pointer;
+}
+
+input:invalid {
+  border-left: solid red;
+}
+
+input:valid {
+  border-left: solid green;
+}
+
+.text-danger {
+  color: red;
+  position: absolute;
+  bottom: -0.2rem;
+  font-size: small;
+}
+
+.text-link {
+  color: green;
+  text-decoration: underline;
 }
 
 /*  P A R T Y  */
@@ -206,6 +294,7 @@ footer ul {
   width: 100%;
   margin: 0;
   padding: 0.25rem;
+  list-style: none;
 }
 
 /*  P A R T I C L E S  */
@@ -213,5 +302,5 @@ footer ul {
   position: fixed;
   bottom: 0;
   left: 0;
-  z-index: 1;
+  z-index: -1;
 }

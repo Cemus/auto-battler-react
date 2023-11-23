@@ -3,7 +3,7 @@ import {
   drawCircle,
   drawTriangle,
   drawCross,
-} from "../utils/draw.js";
+} from "../utils/game/draw.js";
 
 class Player {
   constructor(isPlayer, name, job, gridX, gridY, stats) {

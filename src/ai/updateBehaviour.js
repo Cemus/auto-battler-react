@@ -1,4 +1,4 @@
-import * as ai from "../utils/aiFunctions.js";
+import * as ai from "../utils/game/aiFunctions.js";
 
 //States
 

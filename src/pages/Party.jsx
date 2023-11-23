@@ -1,16 +1,20 @@
 import { Component } from "react";
 import GlowingParticles from "../components/GlowingParticles";
+import getUserData from "../utils/other/getUserData";
 
 export default class Party extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      user: null,
       deck: ["carte 1", "carte 2", "carte 3", "carte 4", "carte 5"],
       cardSlots: [null, null, null, null, null],
       currentlyDragged: null,
     };
     console.log(this.state.cardSlots);
   }
+  getToken = () => {};
+
   deckCreator = () => {
     return this.state.deck.map((card, index) => (
       <li
@@ -80,6 +84,10 @@ export default class Party extends Component {
       });
     }
   };
+  componentDidMount() {
+    const userInfos = JSON.parse(getUserData(false));
+    if (userInfos) this.setState({ user: userInfos });
+  }
 
   render() {
     return (
