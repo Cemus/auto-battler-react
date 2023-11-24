@@ -22,11 +22,11 @@ export default class Register extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount() {
+  /*   componentDidMount() {
     const userInfos = JSON.parse(getUserData(false));
     console.log(userInfos);
     if (userInfos) this.setState({ isLoggedIn: true });
-  }
+  } */
 
   handleChange(event) {
     let input = this.state.inputs;
