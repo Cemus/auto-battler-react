@@ -98,7 +98,7 @@ export default class Register extends Component {
   }
   render() {
     if (this.state.isLoggedIn) {
-      return <Navigate to="/home" />;
+      return <Navigate to="/" />;
     }
     return (
       <>

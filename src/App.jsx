@@ -9,70 +9,82 @@ import Party from "./pages/Party";
 import Shop from "./pages/Shop";
 import Cards from "./pages/Cards";
 import Home from "./pages/Home";
+import { UserProvider } from "./context/UserContext";
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      isLoggedIn: false,
+    };
+  }
+  handleLogout = () => {
+    this.setState({ isLoggedIn: false });
+  };
   render() {
     return (
       <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Layout>
-                <Register />
-              </Layout>
-            }
-          />
+        <UserProvider>
+          <Routes>
+            <Route
+              path="/register"
+              element={
+                <Layout>
+                  <Register />
+                </Layout>
+              }
+            />
 
-          <Route
-            path="/party"
-            element={
-              <Layout>
-                <Party />
-              </Layout>
-            }
-          />
-          <Route
-            path="/cards"
-            element={
-              <Layout>
-                <Cards />
-              </Layout>
-            }
-          />
-          <Route
-            path="/home"
-            element={
-              <Layout>
-                <Home />
-              </Layout>
-            }
-          />
-          <Route
-            path="/shop"
-            element={
-              <Layout>
-                <Shop />
-              </Layout>
-            }
-          />
-          <Route
-            path="/arena"
-            element={
-              <Layout>
-                <Arena />
-              </Layout>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <Layout>
-                <Login />
-              </Layout>
-            }
-          />
-        </Routes>
+            <Route
+              path="/party"
+              element={
+                <Layout>
+                  <Party />
+                </Layout>
+              }
+            />
+            <Route
+              path="/cards"
+              element={
+                <Layout>
+                  <Cards />
+                </Layout>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <Layout>
+                  <Home />
+                </Layout>
+              }
+            />
+            <Route
+              path="/shop"
+              element={
+                <Layout>
+                  <Shop />
+                </Layout>
+              }
+            />
+            <Route
+              path="/arena"
+              element={
+                <Layout>
+                  <Arena />
+                </Layout>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <Layout>
+                  <Login />
+                </Layout>
+              }
+            />
+          </Routes>
+        </UserProvider>
       </Router>
     );
   }

@@ -7,7 +7,7 @@ export default class Party extends Component {
     super(props);
     this.state = {
       user: null,
-      deck: ["carte 1", "carte 2", "carte 3", "carte 4", "carte 5"],
+      deck: [],
       cardSlots: [null, null, null, null, null],
       currentlyDragged: null,
     };
@@ -19,7 +19,7 @@ export default class Party extends Component {
     return this.state.deck.map((card, index) => (
       <li
         id={`card${index}`}
-        key={index}
+        key={`card${index}`}
         draggable={true}
         onDragStart={(e) => this.handleDragStart(e, index)}
       >
@@ -84,9 +84,16 @@ export default class Party extends Component {
       });
     }
   };
+
   componentDidMount() {
     const userInfos = JSON.parse(getUserData(false));
-    if (userInfos) this.setState({ user: userInfos });
+    console.log(userInfos);
+    this.setState({ user: userInfos });
+    userInfos.cards.map((card) => {
+      this.setState((prevState) => ({
+        deck: [...prevState.deck, card.card_id],
+      }));
+    });
   }
 
   render() {
@@ -102,9 +109,10 @@ export default class Party extends Component {
                 <h2>Select a Character</h2>
               </header>
               <ul>
-                <li className="character1">Character 1</li>
-                <li className="character2">Character 2</li>
-                <li className="character3">Character 3</li>
+                {this.state.user?.fighters &&
+                  this.state.user.fighters.map((fighter) => (
+                    <li key={fighter.fighter_id}>{fighter.name}</li>
+                  ))}
               </ul>
             </section>
             <section className="cardSequence">
