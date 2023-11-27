@@ -1,14 +1,17 @@
 import { Component } from "react";
 import GlowingParticles from "../components/GlowingParticles";
-import getUserData from "../utils/other/getUserData";
 import { Navigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 export default class Home extends Component {
+  static contextType = UserContext;
+
   render() {
-    const userInfos = JSON.parse(getUserData(false));
-    if (!userInfos) {
+    const { user } = this.context;
+    if (!user) {
       return <Navigate to="/login" />;
     }
+
     return (
       <main>
         <header className="header--main">

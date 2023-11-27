@@ -1,19 +1,24 @@
 import { Component } from "react";
 import GlowingParticles from "../components/GlowingParticles";
 import getUserData from "../utils/other/getUserData";
+import { UserContext } from "../context/UserContext";
+import { Navigate } from "react-router-dom";
 
 export default class Party extends Component {
+  static contextType = UserContext;
+
   constructor(props) {
     super(props);
     this.state = {
       user: null,
+      characterSelected: null,
       deck: [],
       cardSlots: [null, null, null, null, null],
       currentlyDragged: null,
+      isSubmitting: false,
     };
     console.log(this.state.cardSlots);
   }
-  getToken = () => {};
 
   deckCreator = () => {
     return this.state.deck.map((card, index) => (
@@ -74,29 +79,109 @@ export default class Party extends Component {
       });
     } else {
       const thisSlotCard = this.state.cardSlots[slotIndex];
-      const slotDragged = regexDigitsOnly.exec(currentlyDragged);
-      const newCardSlots = [...this.state.cardSlots];
-      newCardSlots[slotIndex] = this.state.cardSlots[slotDragged];
-      newCardSlots[slotDragged] = thisSlotCard;
-      this.setState({
-        cardSlots: newCardSlots,
-        currentlyDragged: null,
-      });
+      if (thisSlotCard) {
+        const slotDragged = regexDigitsOnly.exec(currentlyDragged);
+        const newCardSlots = [...this.state.cardSlots];
+        newCardSlots[slotIndex] = this.state.cardSlots[slotDragged];
+        newCardSlots[slotDragged] = thisSlotCard;
+        this.setState({
+          cardSlots: newCardSlots,
+          currentlyDragged: null,
+        });
+      } else {
+        const slotDragged = regexDigitsOnly.exec(currentlyDragged);
+        const newCardSlots = [...this.state.cardSlots];
+        const newDeck = [...this.state.deck];
+
+        newDeck.push(newCardSlots[slotDragged]);
+        this.setState({
+          deck: newDeck,
+        });
+
+        newCardSlots[slotDragged] = null;
+        this.setState({
+          cardSlots: newCardSlots,
+          currentlyDragged: null,
+        });
+      }
     }
   };
 
+  handleSlotsValidation = () => {
+    const { characterSelected, cardSlots } = this.state;
+    const modifications = {
+      fighterId: characterSelected.fighter_id,
+      cardSlots: cardSlots,
+    };
+    const token = localStorage.getItem("token");
+    this.setState({
+      isSubmitting: true,
+    });
+    fetch("http://localhost:3000/api/character_change", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(modifications),
+    })
+      .then((response) => {
+        if (response.status === 401) {
+          this.context.logout();
+        }
+        return response.json();
+      })
+      .then((data) => {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("token", data.token);
+        this.context.updateUser();
+      })
+      .catch((error) => {
+        console.error("Error during the request", error);
+        if (error.message === "401") {
+          this.context.logout();
+        }
+      })
+      .finally(() => {
+        this.setState({
+          isSubmitting: false,
+        });
+      });
+  };
+
+  handleCharacterChange(fighterName) {
+    const selectedFighter = this.state.user.fighters.find(
+      (fighter) => fighter.name === fighterName
+    );
+    this.setState({ characterSelected: selectedFighter });
+    const updatedCardSlots = [
+      selectedFighter.slot_1,
+      selectedFighter.slot_2,
+      selectedFighter.slot_3,
+      selectedFighter.slot_4,
+      selectedFighter.slot_5,
+    ];
+
+    this.setState({ cardSlots: updatedCardSlots });
+  }
+
   componentDidMount() {
     const userInfos = JSON.parse(getUserData(false));
-    console.log(userInfos);
     this.setState({ user: userInfos });
+
     userInfos.cards.map((card) => {
-      this.setState((prevState) => ({
-        deck: [...prevState.deck, card.card_id],
-      }));
+      if (!card.is_used)
+        this.setState((prevState) => ({
+          deck: [...prevState.deck, card.card_id],
+        }));
     });
   }
 
   render() {
+    const { user } = this.context;
+    if (!user) {
+      return <Navigate to="/login" />;
+    }
     return (
       <>
         <main className="main--party">
@@ -111,22 +196,42 @@ export default class Party extends Component {
               <ul>
                 {this.state.user?.fighters &&
                   this.state.user.fighters.map((fighter) => (
-                    <li key={fighter.fighter_id}>{fighter.name}</li>
+                    <li key={fighter.fighter_id}>
+                      <button
+                        type="button"
+                        onClick={() => this.handleCharacterChange(fighter.name)}
+                      >
+                        {fighter.name}
+                      </button>
+                    </li>
                   ))}
               </ul>
             </section>
-            <section className="cardSequence">
-              <header>
-                <h2>Card Sequences</h2>
-              </header>
-              <ol>{this.cardSlotsCreator()}</ol>
-            </section>
+            {this.state.characterSelected && (
+              <section className="cardSequence">
+                <header>
+                  <h2>Card Sequences</h2>
+                </header>
+                <ol>{this.cardSlotsCreator()}</ol>
+                {!this.state.isSubmitting && (
+                  <button type="button" onClick={this.handleSlotsValidation}>
+                    Validate
+                  </button>
+                )}
+              </section>
+            )}
           </article>
           <aside>
             <header>
               <h2>Deck</h2>
             </header>
-            <ul>{this.deckCreator()}</ul>
+            <ul
+              onDrop={(e) => this.handleDrop(e)}
+              draggable={false}
+              onDragOver={(e) => this.handleDragOver(e)}
+            >
+              {this.deckCreator()}
+            </ul>
           </aside>
         </main>
         <GlowingParticles />

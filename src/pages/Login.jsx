@@ -2,12 +2,13 @@ import { Component } from "react";
 import GlowingParticles from "../components/GlowingParticles";
 import { Link } from "react-router-dom";
 import { Navigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 
 export default class Register extends Component {
+  static contextType = UserContext;
   constructor(props) {
     super(props);
     this.state = {
-      isLoggedIn: false,
       isSubmitting: false,
       inputs: {
         userName: "",
@@ -57,10 +58,9 @@ export default class Register extends Component {
               },
             }));
           } else {
-            console.log(data);
             localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
-            this.setState({ isLoggedIn: true });
+            this.context.updateUser(data.user);
           }
         })
         .catch((error) => {
@@ -97,7 +97,9 @@ export default class Register extends Component {
     return isValid;
   }
   render() {
-    if (this.state.isLoggedIn) {
+    const { user } = this.context;
+    console.log(user);
+    if (user) {
       return <Navigate to="/" />;
     }
     return (
@@ -149,7 +151,7 @@ export default class Register extends Component {
 
               <p>
                 {"You don't have an account ?"} <br /> Click{" "}
-                <Link to="/" className="text-link">
+                <Link to="/register" className="text-link">
                   here
                 </Link>{" "}
                 to register.

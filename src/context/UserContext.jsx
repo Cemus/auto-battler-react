@@ -1,8 +1,9 @@
-import React, { createContext } from "react";
+import { Component, createContext } from "react";
+import getUserData from "../utils/other/getUserData";
 
 const UserContext = createContext();
 
-class UserProvider extends React.Component {
+class UserProvider extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -10,13 +11,24 @@ class UserProvider extends React.Component {
     };
   }
 
-  logout() {
+  logout = () => {
     localStorage.clear();
     this.setState({ user: null });
+  };
+
+  componentDidMount() {
+    this.login();
   }
 
-  updateUser = (newUser) => {
-    this.setState({ user: newUser });
+  login = () => {
+    const userInfos = JSON.parse(getUserData(false));
+    if (userInfos) this.setState({ user: userInfos });
+  };
+
+  updateUser = () => {
+    console.log("test");
+    const userInfos = JSON.parse(getUserData(false));
+    if (userInfos) this.setState({ user: userInfos });
   };
 
   render() {
@@ -36,4 +48,4 @@ class UserProvider extends React.Component {
 
 const UserConsumer = UserContext.Consumer;
 
-export { UserProvider, UserConsumer };
+export { UserProvider, UserConsumer, UserContext };
