@@ -21,13 +21,17 @@ class UserProvider extends Component {
   }
 
   login = () => {
-    const userInfos = JSON.parse(getUserData(false));
-    if (userInfos) this.setState({ user: userInfos });
+    const userInfos = getUserData(false);
+    let userInfosParsed;
+    if (userInfos) {
+      userInfosParsed = JSON.parse(getUserData(false));
+      this.setState({ user: userInfosParsed });
+    } else {
+      return this.logout();
+    }
   };
 
-  updateUser = () => {
-    console.log("test");
-    const userInfos = JSON.parse(getUserData(false));
+  updateUser = (userInfos) => {
     if (userInfos) this.setState({ user: userInfos });
   };
 

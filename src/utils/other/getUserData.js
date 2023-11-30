@@ -1,5 +1,17 @@
 export default function getUserData(youWantTheToken) {
-  return youWantTheToken
-    ? localStorage.getItem("token")
-    : localStorage.getItem("user");
+  switch (youWantTheToken) {
+    case true:
+      if (localStorage.getItem("token")) {
+        return localStorage.getItem("token");
+      } else {
+        return null;
+      }
+
+    case false:
+      if (localStorage.getItem("user")) {
+        return localStorage.getItem("user");
+      } else {
+        return null;
+      }
+  }
 }

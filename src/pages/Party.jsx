@@ -3,6 +3,7 @@ import GlowingParticles from "../components/GlowingParticles";
 import getUserData from "../utils/other/getUserData";
 import { UserContext } from "../context/UserContext";
 import { Navigate } from "react-router-dom";
+import CardTemplate from "../components/CardTemplate";
 
 export default class Party extends Component {
   static contextType = UserContext;
@@ -28,7 +29,7 @@ export default class Party extends Component {
         draggable={true}
         onDragStart={(e) => this.handleDragStart(e, index)}
       >
-        {card}
+        <CardTemplate cardId={card} />
       </li>
     ));
   };

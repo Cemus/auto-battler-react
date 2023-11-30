@@ -7,9 +7,9 @@ import Login from "./pages/Login";
 import Arena from "./pages/Arena";
 import Party from "./pages/Party";
 import Shop from "./pages/Shop";
-import Cards from "./pages/Cards";
 import Home from "./pages/Home";
 import { UserProvider } from "./context/UserContext";
+import Collection from "./pages/Collection";
 
 class App extends Component {
   constructor() {
@@ -44,10 +44,10 @@ class App extends Component {
               }
             />
             <Route
-              path="/cards"
+              path="/collection"
               element={
                 <Layout>
-                  <Cards />
+                  <Collection />
                 </Layout>
               }
             />
