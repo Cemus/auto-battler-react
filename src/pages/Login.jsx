@@ -47,10 +47,13 @@ export default class Register extends Component {
         }),
       })
         .then((response) => {
+          console.log("SALUT1");
           return response.json();
         })
         .then((data) => {
+          console.log("SALUT");
           if (data.error) {
+            this.context.logout();
             this.setState((prevState) => ({
               errors: {
                 ...prevState.errors,
@@ -58,6 +61,7 @@ export default class Register extends Component {
               },
             }));
           } else {
+            console.log("lolilol");
             localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
             this.context.updateUser(data.user);
@@ -68,7 +72,7 @@ export default class Register extends Component {
           this.setState((prevState) => ({
             errors: {
               ...prevState.errors,
-              submitError: error,
+              submitError: "The server is not responding.",
             },
           }));
         })
@@ -98,8 +102,8 @@ export default class Register extends Component {
   }
   render() {
     const { user } = this.context;
-    console.log(user);
     if (user) {
+      console.log("lol redirecty");
       return <Navigate to="/" />;
     }
     return (
@@ -145,7 +149,9 @@ export default class Register extends Component {
                   <p className="submit">Please wait...</p>
                 )}
                 <div className="text-danger">
-                  {this.state.errors.submitError}
+                  {this.state.errors.submitError && (
+                    <span>{this.state.errors.submitError}</span>
+                  )}
                 </div>
               </div>
 
