@@ -1,5 +1,4 @@
 import { Component } from "react";
-import GlowingParticles from "../components/GlowingParticles";
 import { Link } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
@@ -141,31 +140,28 @@ export default class Register extends Component {
                 ></input>
                 <div className="text-danger">{this.state.errors.password}</div>
               </div>
-
-              <div className="form-group">
-                {!this.state.isSubmitting ? (
-                  <button className="submit">Log in</button>
-                ) : (
-                  <p className="submit">Please wait...</p>
-                )}
-                <div className="text-danger">
-                  {this.state.errors.submitError && (
-                    <span>{this.state.errors.submitError}</span>
-                  )}
-                </div>
-              </div>
-
-              <p>
-                {"You don't have an account ?"} <br /> Click{" "}
-                <Link to="/register" className="text-link">
-                  here
-                </Link>{" "}
-                to register.
-              </p>
             </fieldset>
+            <div className="form-group">
+              {!this.state.isSubmitting ? (
+                <button className="submit">Log in</button>
+              ) : (
+                <p className="submit">Please wait...</p>
+              )}
+              <div className="text-danger">
+                {this.state.errors.submitError && (
+                  <span>{this.state.errors.submitError}</span>
+                )}
+              </div>
+            </div>
+            <p>
+              {"You don't have an account ?"} <br /> Click{" "}
+              <Link to="/register" className="text-link">
+                here
+              </Link>{" "}
+              to register.
+            </p>
           </form>
         </main>
-        <GlowingParticles />
       </>
     );
   }

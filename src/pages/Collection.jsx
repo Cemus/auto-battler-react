@@ -1,5 +1,4 @@
 import { Component } from "react";
-import GlowingParticles from "../components/GlowingParticles";
 import { Navigate } from "react-router-dom";
 import CardTemplate from "../components/CardTemplate";
 import getUserData from "../utils/other/getUserData";
@@ -48,7 +47,6 @@ export default class Collection extends Component {
         <ol className="collection--card-container">
           {this.handleCardDisplay()}
         </ol>
-        <GlowingParticles />
       </main>
     );
   }

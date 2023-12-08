@@ -1,5 +1,4 @@
 import { Component } from "react";
-import GlowingParticles from "../components/GlowingParticles";
 import { Link } from "react-router-dom";
 
 export default class Register extends Component {
@@ -208,8 +207,7 @@ export default class Register extends Component {
               </Link>
             </div>
           )}
-        </main>
-        <GlowingParticles />
+        </main>{" "}
       </>
     );
   }

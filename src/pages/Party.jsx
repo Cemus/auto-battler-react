@@ -1,5 +1,4 @@
 import { Component } from "react";
-import GlowingParticles from "../components/GlowingParticles";
 import getUserData from "../utils/other/getUserData";
 import { UserContext } from "../context/UserContext";
 import { Navigate } from "react-router-dom";
@@ -240,7 +239,6 @@ export default class Party extends Component {
             </ul>
           </aside>
         </main>
-        <GlowingParticles />
       </>
     );
   }

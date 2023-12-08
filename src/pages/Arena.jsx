@@ -1,6 +1,5 @@
 import { Component } from "react";
 import GameLoop from "../components/GameLoop";
-import GlowingParticles from "../components/GlowingParticles";
 
 export default class Arena extends Component {
   render() {
@@ -12,7 +11,6 @@ export default class Arena extends Component {
             <GameLoop />
           </section>
         </main>
-        <GlowingParticles />
       </>
     );
   }

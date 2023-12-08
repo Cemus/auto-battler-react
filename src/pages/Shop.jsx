@@ -1,5 +1,4 @@
 import { Component } from "react";
-import GlowingParticles from "../components/GlowingParticles";
 
 export default class Shop extends Component {
   render() {
@@ -8,7 +7,6 @@ export default class Shop extends Component {
         <main>
           <h2>Shop!</h2>
         </main>
-        <GlowingParticles />
       </>
     );
   }
