@@ -44,7 +44,6 @@ export default class CardTemplate extends Component {
     fetch(`http://localhost:3000/api/cards/${this.props.cardId}`)
       .then((response) => response.json())
       .then((cardDetails) => {
-        console.log(cardDetails);
         this.setState({
           cardName: cardDetails.name,
           type: cardDetails.type,
@@ -86,7 +85,7 @@ export default class CardTemplate extends Component {
         };
         break;
     }
-    console.log(conditionParsed);
+
     return conditionParsed;
   }
 
@@ -137,7 +136,6 @@ export default class CardTemplate extends Component {
       }
     }
 
-    console.log(effectParsed);
     return effectParsed;
   }
 

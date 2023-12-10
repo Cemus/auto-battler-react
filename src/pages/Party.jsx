@@ -17,7 +17,6 @@ export default class Party extends Component {
       currentlyDragged: null,
       isSubmitting: false,
     };
-    console.log(this.state.cardSlots);
   }
 
   deckCreator = () => {
@@ -49,14 +48,10 @@ export default class Party extends Component {
 
   handleDragStart = (e) => {
     this.setState({ currentlyDragged: e.target.id });
-
-    console.log(this.state.currentlyDragged);
   };
 
   handleDragOver = (e) => {
     e.preventDefault();
-    console.log(this.state.currentlyDragged);
-    console.log("dragover");
   };
 
   handleDrop = (e, slotIndex) => {
@@ -65,7 +60,7 @@ export default class Party extends Component {
     const regexTextOnly = /\D+/g;
     if (this.state.characterSelected) {
       const currentlyDragged = this.state.currentlyDragged;
-      console.log(this.state.currentlyDragged);
+
       if (regexTextOnly.exec(currentlyDragged)[0] === "card") {
         const cardIndex = regexDigitsOnly.exec(currentlyDragged);
         const newDeck = [...this.state.deck];
