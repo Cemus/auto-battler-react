@@ -19,7 +19,6 @@ export default class Collection extends Component {
     this.setState({ user: userInfos });
 
     userInfos.cards.map((card) => {
-      console.log(card);
       this.setState((prevState) => ({
         deck: [...prevState.deck, card.card_id],
       }));
@@ -35,7 +34,6 @@ export default class Collection extends Component {
   }
   render() {
     const { user } = this.context;
-    console.log(this.state.deck);
     if (!user) {
       return <Navigate to="/login" />;
     }

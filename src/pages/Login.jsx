@@ -46,11 +46,9 @@ export default class Register extends Component {
         }),
       })
         .then((response) => {
-          console.log("SALUT1");
           return response.json();
         })
         .then((data) => {
-          console.log("SALUT");
           if (data.error) {
             this.context.logout();
             this.setState((prevState) => ({
@@ -60,7 +58,6 @@ export default class Register extends Component {
               },
             }));
           } else {
-            console.log("lolilol");
             localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
             this.context.updateUser(data.user);
@@ -102,7 +99,6 @@ export default class Register extends Component {
   render() {
     const { user } = this.context;
     if (user) {
-      console.log("lol redirecty");
       return <Navigate to="/" />;
     }
     return (

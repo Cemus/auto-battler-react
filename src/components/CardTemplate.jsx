@@ -39,8 +39,12 @@ export default class CardTemplate extends Component {
       "move",
     ];
   }
-
-  componentDidMount() {
+  componentDidUpdate(prevProps) {
+    if (prevProps.cardId !== this.props.cardId) {
+      this.fetchCard();
+    }
+  }
+  fetchCard() {
     fetch(`http://localhost:3000/api/cards/${this.props.cardId}`)
       .then((response) => response.json())
       .then((cardDetails) => {
@@ -55,6 +59,9 @@ export default class CardTemplate extends Component {
         this.context.logout();
         console.error("Cannot find card's details.", error);
       });
+  }
+  componentDidMount() {
+    this.fetchCard();
   }
 
   conditionParser(condition) {

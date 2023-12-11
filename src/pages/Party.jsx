@@ -25,9 +25,9 @@ export default class Party extends Component {
         id={`card${card}`}
         key={`card${index}`}
         draggable={true}
-        onDragStart={(e) => this.handleDragStart(e, index)}
+        onDragStart={(e) => this.handleDragStart(e, `card${card}`)}
       >
-        <CardTemplate cardId={card} small={true} />
+        <CardTemplate key={`cardTemplate${index}`} cardId={card} />
       </li>
     ));
   };
@@ -37,8 +37,8 @@ export default class Party extends Component {
         id={`slot${index}`}
         key={index}
         draggable={true}
-        onDragStart={(e) => this.handleDragStart(e, index)}
-        onDragOver={(e) => this.handleDragOver(e, index)}
+        onDragStart={(e) => this.handleDragStart(e, `slot${index}`)}
+        onDragOver={(e) => this.handleDragOver(e)}
         onDrop={(e) => this.handleDrop(e, index)}
       >
         {card ? card : "[empty slot]"}
@@ -46,8 +46,9 @@ export default class Party extends Component {
     ));
   };
 
-  handleDragStart = (e) => {
-    this.setState({ currentlyDragged: e.target.id });
+  handleDragStart = (e, id) => {
+    e.dataTransfer.setData("text/plain", id);
+    this.setState({ currentlyDragged: id });
   };
 
   handleDragOver = (e) => {
@@ -56,19 +57,18 @@ export default class Party extends Component {
 
   handleDrop = (e, slotIndex) => {
     e.preventDefault();
-    const regexDigitsOnly = /\d/g;
+    const droppedItemId = e.dataTransfer.getData("text/plain");
+    const regexDigitsOnly = /\d+/g;
     const regexTextOnly = /\D+/g;
+
     if (this.state.characterSelected) {
       const currentlyDragged = this.state.currentlyDragged;
 
       if (regexTextOnly.exec(currentlyDragged)[0] === "card") {
-        const cardIndex = regexDigitsOnly.exec(currentlyDragged);
-        const newDeck = [...this.state.deck];
-        const draggedCard = newDeck[cardIndex];
-        newDeck.splice(cardIndex, 1);
-
+        const cardId = parseInt(regexDigitsOnly.exec(droppedItemId)[0]);
+        const newDeck = this.state.deck.filter((card) => card !== cardId);
         const newCardSlots = [...this.state.cardSlots];
-        newCardSlots[slotIndex] = draggedCard;
+        newCardSlots[slotIndex] = cardId;
 
         this.setState({
           deck: newDeck,
@@ -76,36 +76,32 @@ export default class Party extends Component {
           currentlyDragged: null,
         });
       } else {
-        const thisSlotCard = this.state.cardSlots[slotIndex];
-        if (thisSlotCard) {
-          const slotDragged = regexDigitsOnly.exec(currentlyDragged);
-          const newCardSlots = [...this.state.cardSlots];
-          newCardSlots[slotIndex] = this.state.cardSlots[slotDragged];
-          newCardSlots[slotDragged] = thisSlotCard;
-          this.setState({
-            cardSlots: newCardSlots,
-            currentlyDragged: null,
-          });
-        } else {
-          const slotDragged = regexDigitsOnly.exec(currentlyDragged);
-          const newCardSlots = [...this.state.cardSlots];
-          const newDeck = [...this.state.deck];
+        const regexTextOnly = /\D+/g;
+        const draggedElementTextOnly = regexTextOnly.exec(
+          currentlyDragged.toString()
+        )[0];
+        if (draggedElementTextOnly === "slot") {
+          const slotToBeExchangeWith = this.state.cardSlots[slotIndex];
+          console.log(slotToBeExchangeWith);
+          console.log(currentlyDragged);
+          if (slotToBeExchangeWith) {
+            const slotDragged = parseInt(
+              regexDigitsOnly.exec(currentlyDragged)[0]
+            );
+            console.log(slotDragged);
+            const newCardSlots = [...this.state.cardSlots];
+            newCardSlots[slotIndex] = this.state.cardSlots[slotDragged];
+            newCardSlots[slotDragged] = thisSlotCard;
 
-          newDeck.push(newCardSlots[slotDragged]);
-          this.setState({
-            deck: newDeck,
-          });
-
-          newCardSlots[slotDragged] = null;
-          this.setState({
-            cardSlots: newCardSlots,
-            currentlyDragged: null,
-          });
+            this.setState({
+              cardSlots: newCardSlots,
+              currentlyDragged: null,
+            });
+          }
         }
       }
     }
   };
-
   handleSlotsValidation = () => {
     const { characterSelected, cardSlots } = this.state;
     const modifications = {
@@ -174,6 +170,7 @@ export default class Party extends Component {
           deck: [...prevState.deck, card.card_id],
         }));
     });
+    console.log(userInfos);
   }
 
   render() {
