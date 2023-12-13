@@ -35,10 +35,6 @@ li {
 a {
   text-decoration: none;
 }
-.header--pixel {
-  color: white;
-  border: 1px solid white;
-}
 
 /*  H E A D E R  */
 
@@ -502,6 +498,28 @@ form p {
 }
 
 /*  / P A G E S  */
+
+/*  A R E N A  */
+.quest--container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  justify-content: center;
+  text-align: center;
+}
+.arena--group {
+  display: flex;
+  background-color: rgb(53, 53, 52);
+  padding: 2rem;
+  border-radius: 1rem;
+  flex-direction: column;
+  align-items: center;
+}
+.game-container {
+  display: flex;
+  align-items: center;
+}
 
 /*  F O O T E R  */
 footer {

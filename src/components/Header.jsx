@@ -69,6 +69,9 @@ class Header extends Component {
                 <Link to="/shop">Shop</Link>
               </li>
               <li>
+                <Link to="/challenge">Challenge</Link>
+              </li>
+              <li>
                 <Link to="/arena">Arena</Link>
               </li>
             </ul>

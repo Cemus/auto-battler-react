@@ -8,12 +8,23 @@ class UserProvider extends Component {
     super(props);
     this.state = {
       user: null,
+      battleInformations: {
+        fighters: {},
+        quest: {},
+      },
     };
   }
 
   logout = () => {
     localStorage.clear();
     this.setState({ user: null });
+  };
+
+  battle = (selectedFighters, currentQuest) => {
+    console.log(selectedFighters);
+    this.setState({
+      battleInformations: { fighters: selectedFighters, quest: currentQuest },
+    });
   };
 
   componentDidMount() {
@@ -36,12 +47,15 @@ class UserProvider extends Component {
   };
 
   render() {
+    console.log(this.state.battleInformations);
     return (
       <UserContext.Provider
         value={{
           user: this.state.user,
+          battleInformations: this.state.battleInformations,
           updateUser: this.updateUser,
           logout: this.logout,
+          battle: this.battle,
         }}
       >
         {this.props.children}

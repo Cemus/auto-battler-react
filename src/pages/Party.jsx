@@ -15,6 +15,7 @@ export default class Party extends Component {
       deck: [],
       cardSlots: [null, null, null, null, null],
       currentlyDragged: null,
+      fighters: [],
       isSubmitting: false,
     };
   }
@@ -26,6 +27,7 @@ export default class Party extends Component {
         key={`card${index}`}
         draggable={true}
         onDragStart={(e) => this.handleDragStart(e, `card${card}`)}
+        onDrop={(e) => this.handleDrop(e, `card${index}`)}
       >
         <CardTemplate key={`cardTemplate${index}`} cardId={card} />
       </li>
@@ -39,7 +41,7 @@ export default class Party extends Component {
         draggable={true}
         onDragStart={(e) => this.handleDragStart(e, `slot${index}`)}
         onDragOver={(e) => this.handleDragOver(e)}
-        onDrop={(e) => this.handleDrop(e, index)}
+        onDrop={(e) => this.handleDrop(e, `slot${index}`)}
       >
         {card ? card : "[empty slot]"}
       </li>
@@ -47,7 +49,6 @@ export default class Party extends Component {
   };
 
   handleDragStart = (e, id) => {
-    e.dataTransfer.setData("text/plain", id);
     this.setState({ currentlyDragged: id });
   };
 
@@ -55,20 +56,31 @@ export default class Party extends Component {
     e.preventDefault();
   };
 
-  handleDrop = (e, slotIndex) => {
+  handleDrop = (e, droppedOn) => {
     e.preventDefault();
-    const droppedItemId = e.dataTransfer.getData("text/plain");
-    const regexDigitsOnly = /\d+/g;
-    const regexTextOnly = /\D+/g;
+    const regexDigitsOnly = /\d+/;
+    const regexTextOnly = /\D+/;
 
     if (this.state.characterSelected) {
       const currentlyDragged = this.state.currentlyDragged;
+      const draggedElementTextOnly = regexTextOnly.exec(
+        currentlyDragged.toString()
+      )[0];
+      const draggedElementDigitOnly = regexDigitsOnly.exec(
+        currentlyDragged.toString()
+      )[0];
 
-      if (regexTextOnly.exec(currentlyDragged)[0] === "card") {
-        const cardId = parseInt(regexDigitsOnly.exec(droppedItemId)[0]);
+      const droppedOnDigitOnly = regexDigitsOnly.exec(droppedOn)[0];
+      const droppedOnTextOnly = regexTextOnly.exec(droppedOn)[0].toString();
+
+      if (draggedElementTextOnly === "card" && droppedOnTextOnly === "slot") {
+        //Put card in a slot
+        const cardId = parseInt(
+          regexDigitsOnly.exec(draggedElementDigitOnly)[0]
+        );
         const newDeck = this.state.deck.filter((card) => card !== cardId);
         const newCardSlots = [...this.state.cardSlots];
-        newCardSlots[slotIndex] = cardId;
+        newCardSlots[droppedOnDigitOnly] = cardId;
 
         this.setState({
           deck: newDeck,
@@ -76,25 +88,41 @@ export default class Party extends Component {
           currentlyDragged: null,
         });
       } else {
-        const regexTextOnly = /\D+/g;
-        const draggedElementTextOnly = regexTextOnly.exec(
-          currentlyDragged.toString()
-        )[0];
         if (draggedElementTextOnly === "slot") {
-          const slotToBeExchangeWith = this.state.cardSlots[slotIndex];
-          console.log(slotToBeExchangeWith);
-          console.log(currentlyDragged);
-          if (slotToBeExchangeWith) {
+          //Switch slots
+          if (droppedOnTextOnly === "slot") {
+            const currentlyDraggedContent =
+              this.state.cardSlots[droppedOnDigitOnly];
             const slotDragged = parseInt(
               regexDigitsOnly.exec(currentlyDragged)[0]
             );
-            console.log(slotDragged);
+
             const newCardSlots = [...this.state.cardSlots];
-            newCardSlots[slotIndex] = this.state.cardSlots[slotDragged];
-            newCardSlots[slotDragged] = thisSlotCard;
+            newCardSlots[droppedOnDigitOnly] =
+              this.state.cardSlots[slotDragged];
+            newCardSlots[slotDragged] = currentlyDraggedContent;
 
             this.setState({
               cardSlots: newCardSlots,
+              currentlyDragged: null,
+            });
+          } else if (droppedOnTextOnly === "card") {
+            //Put card back in the deck
+            const currentlyDraggedContent =
+              this.state.cardSlots[draggedElementDigitOnly];
+
+            const slotDragged = parseInt(
+              regexDigitsOnly.exec(currentlyDragged)[0]
+            );
+
+            const newCardSlots = [...this.state.cardSlots];
+            const newDeck = [...this.state.deck];
+            newDeck.push(currentlyDraggedContent);
+
+            newCardSlots[slotDragged] = this.state.cardSlots[null];
+            this.setState({
+              cardSlots: newCardSlots,
+              deck: newDeck,
               currentlyDragged: null,
             });
           }
@@ -164,13 +192,24 @@ export default class Party extends Component {
     const userInfos = JSON.parse(getUserData(false));
     this.setState({ user: userInfos });
 
-    userInfos.cards.map((card) => {
-      if (!card.is_used)
+    userInfos.cards.forEach((card) => {
+      if (!card.is_used) {
         this.setState((prevState) => ({
           deck: [...prevState.deck, card.card_id],
         }));
+      }
     });
-    console.log(userInfos);
+
+    userInfos.fighters.forEach((fighter) => {
+      this.setState(
+        (prevState) => ({
+          fighters: [...prevState.fighters, fighter],
+        }),
+        () => {
+          this.handleCharacterChange(this.state.fighters[0].name);
+        }
+      );
+    });
   }
 
   render() {
@@ -190,8 +229,8 @@ export default class Party extends Component {
                 <h2>Select a Character</h2>
               </header>
               <ul>
-                {this.state.user?.fighters &&
-                  this.state.user.fighters.map((fighter) => (
+                {this.state.fighters &&
+                  this.state.fighters.map((fighter) => (
                     <li key={fighter.fighter_id}>
                       <button
                         type="button"
@@ -206,7 +245,7 @@ export default class Party extends Component {
             {this.state.characterSelected && (
               <section className="cardSequence">
                 <header>
-                  <h2>Card Sequences</h2>
+                  <h2>Card Sequence</h2>
                 </header>
                 <ol>{this.cardSlotsCreator()}</ol>
                 {!this.state.isSubmitting && (

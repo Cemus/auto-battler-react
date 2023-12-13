@@ -4,12 +4,14 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import Arena from "./pages/Arena";
+import Challenge from "./pages/Challenge";
 import Party from "./pages/Party";
 import Shop from "./pages/Shop";
 import Home from "./pages/Home";
 import { UserProvider } from "./context/UserContext";
 import Collection from "./pages/Collection";
+import Arena from "./pages/Arena";
+import Battle from "./pages/Battle";
 
 class App extends Component {
   constructor() {
@@ -52,6 +54,14 @@ class App extends Component {
               }
             />
             <Route
+              path="/battle"
+              element={
+                <Layout>
+                  <Battle />
+                </Layout>
+              }
+            />
+            <Route
               path="/"
               element={
                 <Layout>
@@ -64,6 +74,14 @@ class App extends Component {
               element={
                 <Layout>
                   <Shop />
+                </Layout>
+              }
+            />
+            <Route
+              path="/challenge"
+              element={
+                <Layout>
+                  <Challenge />
                 </Layout>
               }
             />
