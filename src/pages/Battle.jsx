@@ -7,24 +7,37 @@ export default class Battle extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fighters: {},
+      players: {},
       quest: {},
       enemies: [],
+      gameLoopStarted: false,
     };
   }
   componentDidMount() {
     const battleInformations = this.context.battleInformations;
-    this.setState({
-      fighters: battleInformations.fighters,
-      quest: battleInformations.quest,
-      enemies: battleInformations.quest.enemies,
-    });
+    this.setState(
+      {
+        players: battleInformations.fighters,
+        quest: battleInformations.quest,
+        enemies: battleInformations.quest.enemies,
+      },
+      () => {
+        console.log("launch");
+        this.launchGameLoop();
+      }
+    );
+  }
+  launchGameLoop() {
+    console.log("started");
+    this.setState({ gameLoopStarted: true });
   }
   render() {
+    console.log(this.state.players, this.state.enemies);
+    console.log(this.state.gameLoopStarted);
     return (
       <div className="arena-container">
-        {this.state.fighters && this.state.enemies && (
-          <GameLoop fighters={this.state.fighters} quest={this.state.quest} />
+        {this.state.gameLoopStarted && (
+          <GameLoop players={this.state.players} enemies={this.state.enemies} />
         )}
       </div>
     );

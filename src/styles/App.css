@@ -547,6 +547,35 @@ footer ul {
   list-style: none;
 }
 
+/*  F O R M A T I O N  */
+.formation--container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: white;
+}
+.formation--row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.formation--square {
+  background-color: black;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  text-align: center;
+  line-height: 2rem;
+}
+
+.formation--square-occupied {
+  background-color: red;
+}
+
 /*  P A R T I C L E S  */
 .particles-container {
   position: fixed;

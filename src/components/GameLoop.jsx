@@ -12,11 +12,13 @@ export default class GameLoop extends Component {
     this.cellSize = 64;
     this.gridSize = this.numCols * this.numRows;
     const { playersList, enemiesList } = createEntities(
-      this.props?.fighters,
-      this.props?.quest?.enemies
+      this.props.players,
+      this.props.enemies
     );
     this.playersList = playersList;
     this.enemiesList = enemiesList;
+    console.log(playersList);
+    console.log(enemiesList);
     this.state = {
       ctx: null,
       currentPlayerIndex: 0,
@@ -103,7 +105,7 @@ export default class GameLoop extends Component {
 
     this.checkIfSomebodyWon(updatedPlayerList, updatedEnemiesList);
 
-    /*     console.log(this.state.allEntitiesList); */
+    console.log(this.state.allEntitiesList);
     if (this.state.currentPlayerIndex < this.state.allEntitiesList.length) {
       const currentPlayer =
         this.state.allEntitiesList[this.state.currentPlayerIndex];

@@ -11,6 +11,7 @@ export default class Challenge extends Component {
       user: null,
       fighters: [],
       fight: false,
+      currentFighter: null,
       selectedFighters: [],
       quests: [
         {
@@ -27,7 +28,7 @@ export default class Challenge extends Component {
           nbFighter: 3,
           gold: 80,
           xp: 80,
-          enemies: ["beasts", "beasts", "beasts"],
+          enemies: ["beast", "beast", "beast"],
         },
       ],
       currentQuest: null,
@@ -48,8 +49,6 @@ export default class Challenge extends Component {
   }
 
   handleQuest(quest) {
-    console.log(quest);
-    console.log(this.state.quests[quest]);
     if (quest !== null) {
       this.setState({ currentQuest: this.state.quests[quest] });
     }
@@ -67,40 +66,30 @@ export default class Challenge extends Component {
     this.setState((prevState) => ({ fight: !prevState.fight }));
   }
 
-  handleFighterSelect(fighter) {
-    this.setState((prevSelected) => ({
-      selectedFighters: [...prevSelected.selectedFighters, fighter],
-    }));
-  }
-
   handleAvailablesFightersDisplay() {
     const { fighters, selectedFighters } = this.state;
-    const fightersDisplay = fighters
-      .filter((fighter) => !selectedFighters.includes(fighter))
-      .map((fighter) => (
-        <li key={fighter.fighter_id}>
-          <button
-            type="button"
-            onClick={() => this.handleFighterSelect(fighter)}
-          >
-            {fighter.name}
-          </button>
-        </li>
-      ));
-    return fightersDisplay;
-  }
-  handleSelectedFightersDisplay() {
-    const { selectedFighters } = this.state;
-    return selectedFighters.map((fighter) => (
-      <li key={`selected${fighter.fighter_id}`}>
-        <button
-          type="button"
-          onClick={() => this.handleSelectedFightersUnselect(fighter)}
-        >
+
+    const availableFighters = fighters.filter(
+      (fighter) =>
+        !selectedFighters.some(
+          (selectedFighter) => selectedFighter.fighter_id === fighter.fighter_id
+        )
+    );
+
+    const fightersDisplay = availableFighters.map((fighter) => (
+      <li key={fighter.fighter_id}>
+        <button type="button" onClick={() => this.handleFighterSelect(fighter)}>
           {fighter.name}
         </button>
       </li>
     ));
+
+    return fightersDisplay;
+  }
+  handleFighterSelect(fighter) {
+    this.setState({
+      currentFighter: fighter,
+    });
   }
   handleSelectedFightersUnselect(fighter) {
     const fighterToRemove = fighter;
@@ -110,15 +99,80 @@ export default class Challenge extends Component {
       ),
     }));
   }
+  handleSelectedFightersDisplay() {
+    const { selectedFighters } = this.state;
+    return selectedFighters.map((fighter) => (
+      <li key={`selected${fighter.fighter_id}`}>
+        <button
+          type="button"
+          onClick={() => this.handleSelectedFightersUnselect(fighter)}
+        >
+          {`${fighter.name} (${fighter.grid_x}-${fighter.grid_y})`}
+        </button>
+      </li>
+    ));
+  }
+
   handleContext() {
     this.context.battle(this.state.selectedFighters, this.state.currentQuest);
   }
-  render() {
-    if (this.state.currentQuest) {
-      console.log(this.state.currentQuest);
-      console.log(this.state.currentQuest.nbFighter);
+  handleGridDisplay() {
+    const gridElements = [];
+    for (let i = 4; i < 8; i++) {
+      gridElements.push(
+        <div key={`row-${i}`} className="formation--row" data-coordinate-x={i}>
+          {this.generateSquareElements(i)}
+        </div>
+      );
     }
 
+    return gridElements;
+  }
+  generateSquareElements(rowIndex) {
+    const { selectedFighters } = this.state;
+
+    const squareElements = [];
+    for (let j = 0; j < 8; j++) {
+      const isOccupied = selectedFighters.some(
+        (fighter) => fighter.grid_x === rowIndex && fighter.grid_y === j
+      );
+
+      squareElements.push(
+        <div
+          key={`square-${rowIndex}-${j}`}
+          className={
+            isOccupied
+              ? "formation--square formation--square-occupied"
+              : "formation--square"
+          }
+          data-coordinate-y={j}
+          onClick={() => this.handleFighterConfirmed(rowIndex, j)}
+        >
+          {`${rowIndex}-${j}`}
+        </div>
+      );
+    }
+
+    return squareElements;
+  }
+  handleFighterConfirmed(gridX, gridY) {
+    this.setState((prevState) => {
+      const updatedCurrentFighter = {
+        ...prevState.currentFighter,
+        grid_x: gridY,
+        grid_y: gridX,
+      };
+
+      return {
+        currentFighter: null,
+        selectedFighters: [
+          ...prevState.selectedFighters,
+          updatedCurrentFighter,
+        ],
+      };
+    });
+  }
+  render() {
     console.log(this.state.selectedFighters);
     return (
       <>
@@ -157,12 +211,32 @@ export default class Challenge extends Component {
             <section className="arena--container">
               <h3>You need one character to add</h3>
               <div className="arena--group">
-                <p>Your fighters :</p>
+                <p>Select your fighters :</p>
                 <ul>{this.handleAvailablesFightersDisplay()}</ul>
-                <p>Selected fighters :</p>
-                <ul>{this.handleSelectedFightersDisplay()}</ul>
+                {this.state.currentFighter && (
+                  <>
+                    <p>
+                      <span>
+                        {this.state.currentFighter.name}
+                        {"'s "}
+                      </span>
+                      formation :
+                    </p>
+                    <div className="formation--container">
+                      {this.handleGridDisplay()}
+                    </div>
+                  </>
+                )}
+
+                {this.state.selectedFighters.length > 0 && (
+                  <div>
+                    <p>Selected Fighters :</p>
+                    <ul>{this.handleSelectedFightersDisplay()}</ul>
+                  </div>
+                )}
                 {this.state.currentQuest &&
-                  this.state.currentQuest.nbFighter ===
+                  this.state.selectedFighters.length > 0 &&
+                  this.state.currentQuest.nbFighter >=
                     this.state.selectedFighters.length && (
                     <Link
                       to="/battle"
