@@ -11,15 +11,18 @@ export default class Battle extends Component {
       quest: {},
       enemies: [],
       gameLoopStarted: false,
+      allCards: [],
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
+    const allCards = await this.getCards();
     const battleInformations = this.context.battleInformations;
     this.setState(
       {
         players: battleInformations.fighters,
         quest: battleInformations.quest,
         enemies: battleInformations.quest.enemies,
+        allCards: allCards,
       },
       () => {
         console.log("launch");
@@ -27,17 +30,31 @@ export default class Battle extends Component {
       }
     );
   }
+  async getCards() {
+    try {
+      const response = await fetch("http://localhost:3000/api/get-cards");
+      const allCards = await response.json();
+      console.log(allCards);
+      return allCards;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des cartes:", error);
+    }
+  }
   launchGameLoop() {
     console.log("started");
     this.setState({ gameLoopStarted: true });
   }
   render() {
     console.log(this.state.players, this.state.enemies);
-    console.log(this.state.gameLoopStarted);
+    console.log(this.state.allCards[0]);
     return (
       <div className="arena-container">
         {this.state.gameLoopStarted && (
-          <GameLoop players={this.state.players} enemies={this.state.enemies} />
+          <GameLoop
+            players={this.state.players}
+            enemies={this.state.enemies}
+            allCards={this.state.allCards}
+          />
         )}
       </div>
     );

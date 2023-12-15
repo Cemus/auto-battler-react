@@ -20,6 +20,7 @@ class Player {
       hasAttacked: false,
       hasMoved: false,
     };
+    this.tokens = [];
   }
   sprite(ctx) {
     let drawingColor = this.isPlayer ? "blue" : "red";

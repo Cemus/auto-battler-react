@@ -320,7 +320,7 @@ export const setDefaultState = (self) => {
   };
 };
 
-export const findTarget = (self, opponentList) => {
+export const getClosestTarget = (self, opponentList) => {
   let closestTarget = null;
 
   opponentList.forEach((entity) => {
@@ -338,10 +338,39 @@ export const findTarget = (self, opponentList) => {
   return closestTarget;
 };
 
-export const isNextToEnemy = (self, target) => {
-  const diffX = Math.abs(target.gridX - self.gridX);
-  const diffY = Math.abs(target.gridY - self.gridY);
-  return (diffX === 1 && diffY === 0) || (diffX === 0 && diffY === 1);
+export const getAdjoiningEntities = (self, targetList) => {
+  const adjoiningList = [];
+
+  targetList.forEach((target) => {
+    const diffX = Math.abs(target.gridX - self.gridX);
+    const diffY = Math.abs(target.gridY - self.gridY);
+    if (!(diffX === 1 && diffY === 0) || (diffX === 0 && diffY === 1)) {
+      adjoiningList.push(target);
+    }
+  });
+  return adjoiningList.length > 0 ? adjoiningList : false;
+};
+
+export const getDiagonalEntities = (self, targetList) => {
+  for (const target of targetList) {
+    const diffX = Math.abs(target.gridX - self.gridX);
+    const diffY = Math.abs(target.gridY - self.gridY);
+
+    if (diffX === diffY && (diffX > 0 || diffY > 0)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const getAxialEntities = (self, targetList) => {
+  return targetList.some((target) => {
+    const diffX = Math.abs(target.gridX - self.gridX);
+    const diffY = Math.abs(target.gridY - self.gridY);
+
+    return (diffX === 1 && diffY === 0) || (diffX === 0 && diffY === 1);
+  });
 };
 
 export default {
@@ -349,8 +378,10 @@ export default {
   Attack,
   setDefaultState,
   followEnemy,
-  findTarget,
-  isNextToEnemy,
+  getClosestTarget,
+  getAdjoiningEntities,
+  getAxialEntities,
+  getDiagonalEntities,
   aStar,
   move,
 };

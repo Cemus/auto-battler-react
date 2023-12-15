@@ -122,7 +122,8 @@ export default class GameLoop extends Component {
         this.nextPlayer,
         this.gridSize,
         this.canvasRef,
-        this.state.ctx
+        this.state.ctx,
+        this.props.allCards
       );
     } else {
       this.setState({ currentPlayerIndex: 0 });
