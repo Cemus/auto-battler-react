@@ -14,12 +14,7 @@ class Player {
     this.stats = stats;
     this.cards = cards;
     this.hp = this.stats.maxHp;
-    this.behaviourStates = {
-      currentState: "IDLE",
-      target: null,
-      hasAttacked: false,
-      hasMoved: false,
-    };
+    this.hasPlayed = false;
     this.tokens = [];
   }
   sprite(ctx) {

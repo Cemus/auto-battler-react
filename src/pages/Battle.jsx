@@ -37,6 +37,7 @@ export default class Battle extends Component {
       console.log(allCards);
       return allCards;
     } catch (error) {
+      this.context.logout();
       console.error("Erreur lors de la récupération des cartes:", error);
     }
   }

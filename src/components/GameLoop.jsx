@@ -24,26 +24,28 @@ export default class GameLoop extends Component {
       currentPlayerIndex: 0,
       allEntitiesList: [...this.playersList, ...this.enemiesList],
       victory: null,
+      consoleText: [],
     };
     this.gameLoop = this.gameLoop.bind(this);
     this.nextPlayer = this.nextPlayer.bind(this);
+    this.handleConsoleText = this.handleConsoleText.bind(this);
   }
 
   nextPlayer() {
-    this.setState((prevState) => ({
-      currentPlayerIndex:
-        (prevState.currentPlayerIndex + 1) % this.state.allEntitiesList.length,
-    }));
+    console.log("next player est lancé");
     this.setState((prevState) => {
       const updatedEntitiesList = [...prevState.allEntitiesList];
-      updatedEntitiesList[prevState.currentPlayerIndex].hasAttacked = false;
+      updatedEntitiesList[prevState.currentPlayerIndex].hasPlayed = false;
+
       return {
+        currentPlayerIndex:
+          (prevState.currentPlayerIndex + 1) % updatedEntitiesList.length,
         allEntitiesList: updatedEntitiesList,
       };
     });
   }
 
-  createGrid(ctx) {
+  renderArena(ctx) {
     const cellColor = "black";
     const cellSpacing = 1;
 
@@ -84,6 +86,7 @@ export default class GameLoop extends Component {
       if (updatedEnemiesList.length === 0) {
         tempVictory = true;
       }
+
       setTimeout(() => {
         this.setState({ victory: tempVictory });
         clearInterval(this.gameLoopInterval);
@@ -94,7 +97,7 @@ export default class GameLoop extends Component {
 
   gameLoop() {
     this.state.ctx.clearRect(0, 0, this.canvasRef.width, this.canvasRef.height);
-    this.createGrid(this.state.ctx);
+    this.renderArena(this.state.ctx);
 
     const updatedPlayerList = this.playersList.filter(
       (entity) => entity.hp > 0
@@ -102,10 +105,11 @@ export default class GameLoop extends Component {
     const updatedEnemiesList = this.enemiesList.filter(
       (entity) => entity.hp > 0
     );
-
+    console.log("enemylistupdated:", updatedEnemiesList);
+    console.log("playerlistupdated:", updatedPlayerList);
     this.checkIfSomebodyWon(updatedPlayerList, updatedEnemiesList);
 
-    console.log(this.state.allEntitiesList);
+    console.log("all entities :", this.state.allEntitiesList);
     if (this.state.currentPlayerIndex < this.state.allEntitiesList.length) {
       const currentPlayer =
         this.state.allEntitiesList[this.state.currentPlayerIndex];
@@ -114,20 +118,31 @@ export default class GameLoop extends Component {
           entity.sprite(this.state.ctx);
         }
       });
-      updateBehaviour(
-        currentPlayer,
-        updatedPlayerList,
-        updatedEnemiesList,
-        this.state.allEntitiesList,
-        this.nextPlayer,
-        this.gridSize,
-        this.canvasRef,
-        this.state.ctx,
-        this.props.allCards
-      );
+      console.log("current Player:", currentPlayer);
+      if (!this.state.victory) {
+        updateBehaviour(
+          currentPlayer,
+          updatedPlayerList,
+          updatedEnemiesList,
+          this.state.allEntitiesList,
+          this.nextPlayer,
+          this.gridSize,
+          this.canvasRef,
+          this.state.ctx,
+          this.props.allCards,
+          this.handleConsoleText
+        );
+      }
     } else {
       this.setState({ currentPlayerIndex: 0 });
     }
+  }
+
+  handleConsoleText(text) {
+    this.setState((prevState) => {
+      const newConsoleText = [...prevState.consoleText, text];
+      return { consoleText: newConsoleText };
+    });
   }
 
   componentDidMount() {
@@ -135,16 +150,15 @@ export default class GameLoop extends Component {
     const ctx = canvas.getContext("2d");
     canvas.width = 512;
     canvas.height = 512;
-    this.createGrid(ctx);
+    this.renderArena(ctx);
     this.setState({ ctx }, () => {
-      this.gameLoopInterval = setInterval(this.gameLoop, 120);
+      this.gameLoopInterval = setInterval(this.gameLoop, 360);
     });
   }
   componentWillUnmount() {
     clearInterval(this.gameLoopInterval);
   }
   render() {
-    console.log(this.props);
     if (this.state.victory === null) {
       return (
         <>
@@ -154,6 +168,11 @@ export default class GameLoop extends Component {
             width={this.canvasRef.width}
             height={this.canvasRef.height}
           ></canvas>
+          <div className="text-box">
+            <p>{this.state.consoleText[this.state.consoleText.length - 3]}</p>
+            <p>{this.state.consoleText[this.state.consoleText.length - 2]}</p>
+            <p>{this.state.consoleText[this.state.consoleText.length - 1]}</p>
+          </div>
         </>
       );
     } else {

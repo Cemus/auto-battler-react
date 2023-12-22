@@ -576,6 +576,23 @@ footer ul {
   background-color: red;
 }
 
+/*  A R E N A  */
+
+.text-box {
+  background-color: black;
+  border: 0.5rem solid white;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-box p {
+  padding: 0;
+  margin: 0;
+}
+
 /*  P A R T I C L E S  */
 .particles-container {
   position: fixed;

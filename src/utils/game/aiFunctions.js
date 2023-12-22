@@ -81,6 +81,10 @@ function verifyNode(list, node) {
 }
 
 export function aStar(self, target, all, gridSize) {
+  console.log("self:", self);
+  console.log("target:", target);
+  console.log("all:", all);
+  console.log("gridSize:", gridSize);
   let selfNode = new Node(self.gridX, self.gridY);
   let targetNode = new Node(target.gridX, target.gridY);
   const start = selfNode;
@@ -269,7 +273,7 @@ const getRandomDirection = () => {
   return directions[randomIndex];
 };
 
-export const Attack = (self, target, all, gridSize) => {
+export const pushedAttack = (self, target, all, gridSize) => {
   let targetPushed = false;
 
   if (!self.hasAttacked) {
@@ -307,8 +311,11 @@ export const Attack = (self, target, all, gridSize) => {
       }
     }
     target.hp -= self.stats.atk;
-    self.behaviourStates.hasAttacked = true;
   }
+};
+
+export const Attack = (self, target) => {
+  target.hp -= self.stats.atk;
 };
 
 export const setDefaultState = (self) => {
@@ -344,10 +351,11 @@ export const getAdjoiningEntities = (self, targetList) => {
   targetList.forEach((target) => {
     const diffX = Math.abs(target.gridX - self.gridX);
     const diffY = Math.abs(target.gridY - self.gridY);
-    if (!(diffX === 1 && diffY === 0) || (diffX === 0 && diffY === 1)) {
+    if ((diffX === 1 && diffY === 0) || (diffX === 0 && diffY === 1)) {
       adjoiningList.push(target);
     }
   });
+  console.log("ajoininglist", adjoiningList);
   return adjoiningList.length > 0 ? adjoiningList : false;
 };
 
